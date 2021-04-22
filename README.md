@@ -1,2 +1,2 @@
 # form_bloc
-Lightweight reactive forms library
+Lightweight reactive form library
