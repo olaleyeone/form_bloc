@@ -1,0 +1,7 @@
+name: form_bloc
+description: Lightweight reactive form framework.
+version: 0.0.1
+repository: https://github.com/olaleyeone/form_bloc
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
