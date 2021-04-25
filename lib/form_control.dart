@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import './src/merge_validators.dart';
+
 import './validator.dart';
 import './form_control_state.dart';
 
@@ -11,12 +13,13 @@ class FormControl<T> {
 
   FormControl({
     T value,
-    Validator<T> validator,
+    List<Validator<T>> validators,
   }) {
     _value = value;
     _stream = StreamController<FormControlState<T>>.broadcast();
-    if (validator != null) {
-      _validator = validator;
+
+    if (validators?.isNotEmpty ?? false) {
+      _validator = mergeValidators(validators);
       _validator(value).then(
         (error) {
           _state = FormControlState(

@@ -1,0 +1,13 @@
+import '../form_bloc.dart';
+
+Validator<T> mergeValidators<T>(List<Validator<T>> validators) {
+  return (T value) async {
+    for (var entry in validators) {
+      String error = await entry(value);
+      if (error != null) {
+        return Future.value(error);
+      }
+    }
+    return Future.value();
+  };
+}
