@@ -6,7 +6,6 @@ import './form_state.dart';
 export './form_state.dart';
 export './form_control.dart';
 export './form_control_state.dart';
-export './validator.dart';
 
 class FormBloc {
   FormState _state;

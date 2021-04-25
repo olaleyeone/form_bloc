@@ -1,4 +1,4 @@
-import '../form_bloc.dart';
+import '../validator.dart';
 
 Validator<T> mergeValidators<T>(List<Validator<T>> validators) {
   return (T value) async {
