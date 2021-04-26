@@ -14,6 +14,7 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
   bool _valid = true;
 
   FormGroup({Map<String, FormMember<dynamic>> members}) {
+    _stream = StreamController.broadcast();
     _validity = StreamController.broadcast();
     _value = Map<String, dynamic>();
     this._members = Map<String, FormMember<dynamic>>();
@@ -21,8 +22,7 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
       this._members.addAll(members);
     }
 
-    _valid = _isValid();
-    _stream.sink.add(state);
+    _refreshAndBroadcast();
   }
 
   bool get valid => _valid;
@@ -48,12 +48,14 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
     _members[name] = control;
     control.stateStream.listen((event) {
       _value[name] = event?.value;
-      _valid = _isValid();
 
-      _validity.sink.add(_valid);
-      _stream.sink.add(state);
+      _refreshAndBroadcast();
     });
 
+    _refreshAndBroadcast();
+  }
+
+  void _refreshAndBroadcast() {
     _valid = _isValid();
     _validity.sink.add(_valid);
     _stream.sink.add(state);
