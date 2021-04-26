@@ -1,13 +1,4 @@
-class FormState {
-  Map<String, dynamic> _data;
-
-  FormState() {
-    this._data = Map<String, dynamic>();
-  }
-
-  setField(String name, dynamic value) {
-    _data[name] = value;
-  }
-
-  Map<String, dynamic> get data => _data;
-}
+export 'src/form.dart';
+export 'src/form_control.dart';
+export 'src/form_control_state.dart';
+export 'src/form_state.dart';

@@ -1,19 +1,15 @@
 import 'dart:async';
 
-import './form_control.dart';
-import './form_state.dart';
+import 'form_control.dart';
+import 'form_state.dart';
 
-export './form_state.dart';
-export './form_control.dart';
-export './form_control_state.dart';
-
-class FormBloc {
+class Form {
   FormState _state;
   Map<String, FormControl<dynamic>> _controls;
   StreamController<bool> _validity;
   bool _valid = false;
 
-  FormBloc({FormState state}) {
+  Form({FormState state}) {
     _state = state ?? FormState();
     this._controls = Map<String, FormControl<dynamic>>();
     _validity = StreamController.broadcast();

@@ -1,34 +1,34 @@
-# form_bloc
+# form_state
 Lightweight reactive form library
 
-## Login Form Bloc Sample
+## Login Form Sample
 
 ```
 enum LoginField { IDENTIFIER, PASSWORD }
 
 class LoginBloc {
-  final _formBloc = FormBloc();
+  final _form = Form();
 
   LoginBloc(this.authBloc) {
-    _formBloc.addControl<String>(
+    _form.addControl<String>(
       LoginField.IDENTIFIER.toString(),
       FormControl<String>(
-        validator: mergeValidators([requiredField, validEmail]),
+        validators: [requiredField, validEmail],
       ),
     );
-    _formBloc.addControl<String>(
+    _form.addControl<String>(
       LoginField.PASSWORD.toString(),
-      FormControl<String>(validator: requiredField),
+      FormControl<String>(validators: [requiredField]),
     );
   }
 
   FormControl<T> getControl<T>(LoginField field) =>
-      _formBloc.getControl<T>(field.toString());
+      _form.getControl<T>(field.toString());
 
-  Stream<bool> get valid => _formBloc.validityStream;
+  Stream<bool> get valid => _form.validityStream;
 
   Future login() {
-    final data = _formBloc.value;
+    final data = _form.value;
     final apiRequest = PasswordLoginApiRequest()
       ..identifier = (data[LoginField.IDENTIFIER.toString()] as String)?.trim()
       ..password = data[LoginField.PASSWORD.toString()] as String;
@@ -41,7 +41,7 @@ class LoginBloc {
   }
 
   void dispose() {
-    _formBloc.dispose();
+    _form.dispose();
   }
 }
 ```

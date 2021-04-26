@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import './src/merge_validators.dart';
+import 'merge_validators.dart';
+import 'form_control_state.dart';
 
-import './validator.dart';
-import './form_control_state.dart';
+import '../validator.dart';
 
 class FormControl<T> {
   Validator<T> _validator;
