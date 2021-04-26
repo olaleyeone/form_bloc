@@ -11,5 +11,5 @@ class FormControlState<T> implements FormMemberState<T> {
     this.visited = false,
   });
 
-  String get error => (errors?.isNotEmpty ?? false) ? errors[0] : null;
+  String get error => (errors?.isNotEmpty ?? false) ? errors.first : null;
 }

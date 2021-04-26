@@ -26,7 +26,7 @@ class FormControl<T> implements FormMember<T> {
         (error) {
           _state = FormControlState(
             value: value,
-            errors: [error],
+            errors: error == null ? [] : [error],
           );
           _stream.sink.add(_state);
         },
@@ -50,7 +50,7 @@ class FormControl<T> implements FormMember<T> {
           _state = FormControlState(
             value: value,
             visited: state.visited,
-            errors: [error],
+            errors: error == null ? [] : [error],
           );
           _stream.sink.add(_state);
           return _state;

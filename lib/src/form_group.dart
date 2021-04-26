@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'form_group_state.dart';
-import 'form_member_state.dart';
 
 import 'form_member.dart';
 
@@ -33,7 +32,7 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
 
   Stream<FormGroupState> get stateStream => _stream.stream;
 
-  FormMemberState<Map<String, dynamic>> get state => FormGroupState(
+  FormGroupState get state => FormGroupState(
       value: _value,
       errors: _members.values
           .map((e) => e.state)
@@ -48,7 +47,6 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
     _members[name] = control;
     control.stateStream.listen((event) {
       _value[name] = event?.value;
-
       _refreshAndBroadcast();
     });
 
@@ -62,8 +60,8 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
   }
 
   bool _isValid() {
-    for (var val in _members.values) {
-      if (val.state == null || (val.state.errors?.isNotEmpty ?? false)) {
+    for (var entry in _members.entries) {
+      if (entry.value.state == null || entry.value.state.errors.isNotEmpty) {
         return false;
       }
     }
