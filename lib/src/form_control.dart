@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'form_member.dart';
+
 import 'merge_validators.dart';
 import 'form_control_state.dart';
 
 import '../validator.dart';
 
-class FormControl<T> {
+class FormControl<T> implements FormMember<T> {
   Validator<T> _validator;
   FormControlState<T> _state;
   T _value;
@@ -24,7 +26,7 @@ class FormControl<T> {
         (error) {
           _state = FormControlState(
             value: value,
-            error: error,
+            errors: [error],
           );
           _stream.sink.add(_state);
         },
@@ -48,7 +50,7 @@ class FormControl<T> {
           _state = FormControlState(
             value: value,
             visited: state.visited,
-            error: error,
+            errors: [error],
           );
           _stream.sink.add(_state);
           return _state;
@@ -75,7 +77,7 @@ class FormControl<T> {
     _state = FormControlState(
       value: _state.value,
       visited: true,
-      error: _state.error,
+      errors: _state.errors,
     );
     _stream.sink.add(_state);
   }
