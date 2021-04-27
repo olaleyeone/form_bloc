@@ -61,7 +61,8 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
 
   bool _isValid() {
     for (var entry in _members.entries) {
-      if (entry.value.state == null || entry.value.state.errors.isNotEmpty) {
+      if (entry.value.state == null ||
+          (entry.value.state.errors?.isNotEmpty ?? false)) {
         return false;
       }
     }
