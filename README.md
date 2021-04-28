@@ -7,7 +7,7 @@ Lightweight reactive form library
 enum LoginField { IDENTIFIER, PASSWORD }
 
 class LoginBloc {
-  final _form = Form();
+  final _form = FormGroup();
 
   LoginBloc(this.authBloc) {
     _form.addControl<String>(

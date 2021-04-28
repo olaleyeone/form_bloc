@@ -43,7 +43,7 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
         return value;
       }));
 
-  addControl<T>(String name, FormMember<T> control) {
+  add<T>(String name, FormMember<T> control) {
     _members[name] = control;
     control.stateStream.listen((event) {
       _value[name] = event?.value;
@@ -70,6 +70,11 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
   }
 
   FormMember<T> get<T>(String name) => _members[name] as FormMember<T>;
+
+  void remove(String name) {
+    _members.remove(name);
+    _refreshAndBroadcast();
+  }
 
   void dispose() {
     _validity.close();
