@@ -50,6 +50,7 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
       _refreshAndBroadcast();
     });
 
+    _value[name] = control.state?.value;
     _refreshAndBroadcast();
   }
 
