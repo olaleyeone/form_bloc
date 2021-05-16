@@ -19,7 +19,9 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
     _stream = StreamController.broadcast();
     _validity = StreamController.broadcast();
     _value = Map<String, dynamic>();
-    this._members = Map<String, FormMember<dynamic>>();
+    _members = Map<String, FormMember<dynamic>>();
+    _listeners =
+        Map<String, List<StreamSubscription<FormMemberState<dynamic>>>>();
     if (members != null) {
       this._members.addAll(members);
     }
