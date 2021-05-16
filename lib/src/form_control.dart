@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:form_state/src/form_member_state.dart';
-
 import 'form_member.dart';
 
 import 'merge_validators.dart';
@@ -71,14 +69,15 @@ class FormControl<T> implements FormMember<T> {
   Stream<FormControlState<T>> get stateStream => _stream.stream;
 
   @override
-  Future<FormMemberState<T>> refreshState() {
+  Future<FormControlState<T>> refreshState() {
     FormControlState<T> state = _state;
     if (_validator != null) {
       _stream.sink.add(null);
       return _validator(value).then(
         (error) {
+          print('${value}: ${error}');
           if (_state != state) {
-            return _state;
+            return refreshState();
           }
           _state = FormControlState(
             value: value,

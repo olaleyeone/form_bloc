@@ -59,8 +59,8 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
     _listeners[name] = listeners;
 
     if (dependsOn != null) {
-      listeners.addAll(dependsOn.map(
-          (element) => element.stateStream.listen((event) => refreshState())));
+      listeners.addAll(dependsOn.map((element) =>
+          element.stateStream.listen((event) => control.refreshState())));
     }
 
     listeners.add(control.stateStream.listen((event) {
