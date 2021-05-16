@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:form_state/src/form_member_state.dart';
+
 import 'form_member.dart';
 
 import 'merge_validators.dart';
@@ -39,31 +41,7 @@ class FormControl<T> implements FormMember<T> {
 
   Future<FormControlState<T>> setValue(T value) {
     _value = value;
-    FormControlState<T> state = _state;
-    if (_validator != null) {
-      _stream.sink.add(null);
-      return _validator(value).then(
-        (error) {
-          if (_state != state) {
-            return _state;
-          }
-          _state = FormControlState(
-            value: value,
-            visited: state.visited,
-            errors: error == null ? [] : [error],
-          );
-          _stream.sink.add(_state);
-          return _state;
-        },
-      );
-    } else {
-      _state = FormControlState(
-        value: value,
-        visited: state.visited,
-      );
-      _stream.sink.add(_state);
-    }
-    return Future.value(_state);
+    return refreshState();
   }
 
   setInFocus(bool focus) {
@@ -91,4 +69,33 @@ class FormControl<T> implements FormMember<T> {
   FormControlState<T> get state => _state;
 
   Stream<FormControlState<T>> get stateStream => _stream.stream;
+
+  @override
+  Future<FormMemberState<T>> refreshState() {
+    FormControlState<T> state = _state;
+    if (_validator != null) {
+      _stream.sink.add(null);
+      return _validator(value).then(
+        (error) {
+          if (_state != state) {
+            return _state;
+          }
+          _state = FormControlState(
+            value: value,
+            visited: state.visited,
+            errors: error == null ? [] : [error],
+          );
+          _stream.sink.add(_state);
+          return _state;
+        },
+      );
+    } else {
+      _state = FormControlState(
+        value: value,
+        visited: state.visited,
+      );
+      _stream.sink.add(_state);
+    }
+    return Future.value(_state);
+  }
 }

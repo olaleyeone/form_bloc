@@ -4,4 +4,6 @@ abstract class FormMember<T> {
   FormMemberState<T> get state;
 
   Stream<FormMemberState<T>> get stateStream;
+
+  Future<FormMemberState<T>> refreshState();
 }
