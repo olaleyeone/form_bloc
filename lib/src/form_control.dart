@@ -37,11 +37,13 @@ class FormControl<T> implements FormMember<T> {
     }
   }
 
+  /// Set a new value
   Future<FormControlState<T>> setValue(T value) {
     _value = value;
     return refreshState();
   }
 
+  /// Set when control is in focus
   setInFocus(bool focus) {
     if (focus) {
       return;
@@ -65,12 +67,15 @@ class FormControl<T> implements FormMember<T> {
     _stream.close();
   }
 
+  /// Get the current state of the form member
   @override
   FormControlState<T> get state => _state;
 
+  /// Get a stream to listen to changes in the state of the form member
   @override
   Stream<FormControlState<T>> get stateStream => _stream.stream;
 
+  /// Force form member to compute state by visiting its members
   @override
   Future<FormControlState<T>> refreshState() {
     FormControlState<T> state = _state;

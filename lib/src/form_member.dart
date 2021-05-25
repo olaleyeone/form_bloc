@@ -7,5 +7,6 @@ abstract class FormMember<T> {
 
   Future<FormMemberState<T>> refreshState();
 
+  /// Close the state stream and other resources
   close();
 }

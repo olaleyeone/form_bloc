@@ -25,15 +25,20 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
     refreshState();
   }
 
+  /// Get the current validity of the form
   bool get valid => _valid;
 
+  /// Get a stream to listen to changes in the validity of the form
   Stream<bool> get validityStream => _validity.stream;
 
+  /// Get the current value of the form
   Map<String, dynamic> get value => _value;
 
+  /// Get a stream to listen to changes in the state of the form
   @override
   Stream<FormGroupState> get stateStream => _stream.stream;
 
+  /// Get the current state of the form
   @override
   FormGroupState get state => FormGroupState(
         value: _value,
@@ -50,34 +55,37 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
         ),
       );
 
+  /// Add form member.
+  /// Optionally provide other members whose value can affect validity of this member.
   add<T>(
     String name,
-    FormMember<T> control, {
+    FormMember<T> member, {
     List<FormMember<dynamic>> dependsOn,
-    bool disposeOnRemove = true,
+    bool closeOnRemove = true,
   }) {
-    if (disposeOnRemove == true) {
-      _disposables.add(control);
+    if (closeOnRemove == true) {
+      _disposables.add(member);
     }
     List<StreamSubscription<FormMemberState<T>>> listeners = [];
-    _members[name] = control;
+    _members[name] = member;
     _listeners[name] = listeners;
 
     if (dependsOn != null) {
       listeners.addAll(dependsOn.map((element) =>
-          element.stateStream.listen((event) => control.refreshState())));
+          element.stateStream.listen((event) => member.refreshState())));
     }
 
-    listeners.add(control.stateStream.listen((event) {
+    listeners.add(member.stateStream.listen((event) {
       // print('$name: ${event?.value}');
       _value[name] = event?.value;
       refreshState();
     }));
 
-    _value[name] = control.state?.value;
+    _value[name] = member.state?.value;
     refreshState();
   }
 
+  /// Remove a form member by name
   void remove(String name) {
     final member = _members.remove(name);
     if (_disposables.remove(member)) {
@@ -90,6 +98,7 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
     refreshState();
   }
 
+  /// Force form to compute state by visiting its members
   @override
   Future<FormGroupState> refreshState() {
     _valid = _isValid();
@@ -109,6 +118,7 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
     return true;
   }
 
+  /// Retrieve a form member by name
   FormMember<T> get<T>(String name) => _members[name] as FormMember<T>;
 
   @override
