@@ -7,23 +7,19 @@ import 'form_group_state.dart';
 import 'form_member.dart';
 
 class FormGroup implements FormMember<Map<String, dynamic>> {
-  Map<String, dynamic> _value;
-  StreamController<FormGroupState> _stream;
-  Map<String, FormMember<dynamic>> _members;
-  Map<String, List<StreamSubscription<FormMemberState<dynamic>>>> _listeners;
-
-  StreamController<bool> _validity;
+  Map<String, dynamic> _value = Map();
+  StreamController<FormGroupState> _stream = StreamController.broadcast();
+  Map<String, FormMember<dynamic>> _members = Map();
+  Map<String, List<StreamSubscription<FormMemberState<dynamic>>>> _listeners =
+      Map();
+  Set<FormMember<dynamic>> _disposables = Set();
+  StreamController<bool> _validity = StreamController.broadcast();
   bool _valid = true;
 
   FormGroup({Map<String, FormMember<dynamic>> members}) {
-    _stream = StreamController.broadcast();
-    _validity = StreamController.broadcast();
-    _value = Map<String, dynamic>();
-    _members = Map<String, FormMember<dynamic>>();
-    _listeners =
-        Map<String, List<StreamSubscription<FormMemberState<dynamic>>>>();
     if (members != null) {
       this._members.addAll(members);
+      this._disposables.addAll(members.values);
     }
 
     refreshState();
@@ -35,8 +31,10 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
 
   Map<String, dynamic> get value => _value;
 
+  @override
   Stream<FormGroupState> get stateStream => _stream.stream;
 
+  @override
   FormGroupState get state => FormGroupState(
         value: _value,
         errors: _members.values
@@ -52,8 +50,15 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
         ),
       );
 
-  add<T>(String name, FormMember<T> control,
-      {List<FormMember<dynamic>> dependsOn}) {
+  add<T>(
+    String name,
+    FormMember<T> control, {
+    List<FormMember<dynamic>> dependsOn,
+    bool disposeOnRemove = true,
+  }) {
+    if (disposeOnRemove == true) {
+      _disposables.add(control);
+    }
     List<StreamSubscription<FormMemberState<T>>> listeners = [];
     _members[name] = control;
     _listeners[name] = listeners;
@@ -64,11 +69,24 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
     }
 
     listeners.add(control.stateStream.listen((event) {
+      // print('$name: ${event?.value}');
       _value[name] = event?.value;
       refreshState();
     }));
 
     _value[name] = control.state?.value;
+    refreshState();
+  }
+
+  void remove(String name) {
+    final member = _members.remove(name);
+    if (_disposables.remove(member)) {
+      member.close();
+    }
+    final listeners = _listeners.remove(name);
+    if (listeners != null) {
+      listeners.forEach((element) => element.cancel());
+    }
     refreshState();
   }
 
@@ -93,20 +111,14 @@ class FormGroup implements FormMember<Map<String, dynamic>> {
 
   FormMember<T> get<T>(String name) => _members[name] as FormMember<T>;
 
-  void remove(String name) {
-    _members.remove(name);
-    final listeners = _listeners.remove(name);
-    if (listeners != null) {
-      listeners.forEach((element) => element.cancel());
-    }
-    refreshState();
-  }
-
-  void dispose() {
+  @override
+  void close() {
     _validity.close();
     _stream.close();
     _listeners.values
         .forEach((val) => val.forEach((element) => element.cancel()));
     _listeners.clear();
+    _disposables.forEach((element) => element.close());
+    _disposables.clear();
   }
 }

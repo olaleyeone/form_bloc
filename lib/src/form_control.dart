@@ -60,12 +60,15 @@ class FormControl<T> implements FormMember<T> {
 
   T get value => _value;
 
+  @override
   close() {
     _stream.close();
   }
 
+  @override
   FormControlState<T> get state => _state;
 
+  @override
   Stream<FormControlState<T>> get stateStream => _stream.stream;
 
   @override
@@ -75,7 +78,6 @@ class FormControl<T> implements FormMember<T> {
       _stream.sink.add(null);
       return _validator(value).then(
         (error) {
-          print('${value}: ${error}');
           if (_state != state) {
             return refreshState();
           }

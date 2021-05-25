@@ -16,7 +16,7 @@ Validator<num> min(num min, {String message}) {
     if (value == null || value > min) {
       return Future.value();
     }
-    return Future.value("Cannot be less than ${min}");
+    return Future.value("Cannot be less than $min");
   };
 }
 
@@ -25,6 +25,6 @@ Validator<num> max(num max, {String message}) {
     if (value == null || value < max) {
       return Future.value();
     }
-    return Future.value("Cannot be greater than ${max}");
+    return Future.value("Cannot be greater than $max");
   };
 }

@@ -9,40 +9,47 @@ enum LoginField { IDENTIFIER, PASSWORD }
 class LoginBloc {
   final _form = FormGroup();
 
-  LoginBloc(this.authBloc) {
-    _form.addControl<String>(
+  LoginBloc() {
+    _form.add<String>(
       LoginField.IDENTIFIER.toString(),
       FormControl<String>(
-        validators: [requiredField, validEmail],
+        validators: [validator.required],
       ),
     );
-    _form.addControl<String>(
+    _form.add<String>(
       LoginField.PASSWORD.toString(),
-      FormControl<String>(validators: [requiredField]),
+      FormControl<String>(
+        validators: [validator.required],
+      ),
     );
   }
 
   FormControl<T> getControl<T>(LoginField field) =>
-      _form.getControl<T>(field.toString());
+      _form.get<T>(field.toString());
 
   Stream<bool> get valid => _form.validityStream;
 
-  Future login() {
+  Future login() async {
     final data = _form.value;
-    final apiRequest = PasswordLoginApiRequest()
-      ..identifier = (data[LoginField.IDENTIFIER.toString()] as String)?.trim()
-      ..password = data[LoginField.PASSWORD.toString()] as String;
-    return **your_api_client**.login(apiRequest);
-  }
-
-  static LoginBloc of(BuildContext context) {
-    final LoginBlocProvider provider = context.findAncestorWidgetOfExactType();
-    return provider.bloc;
+    //TODO: make API call and return response;
+    return data;
   }
 
   void dispose() {
-    _form.dispose();
+    _form.close();
   }
+}
+
+main() async {
+  final bloc = LoginBloc();
+  print(bloc._form.valid); // false
+  await bloc.getControl(LoginField.IDENTIFIER).setValue('Form');
+  await bloc.getControl(LoginField.PASSWORD).setValue('Reactive');
+  await Future.microtask(() async {
+    print(bloc._form.valid); // true
+    print(await bloc.login());
+    bloc.dispose();
+  });
 }
 ```
 
@@ -72,19 +79,7 @@ Widget _buildEmailInput(FormControl<String> control) {
       stream: control.stateStream,
       builder: (context, snapshot) => Focus(
         child: TextField(
-          obscureText: !_showPassword,
           decoration: InputDecoration(
-            contentPadding: EdgeInsets.only(top: 15),
-            suffix: IconButton(
-              icon: _showPassword
-                  ? Icon(Icons.visibility)
-                  : Icon(Icons.visibility_off),
-              onPressed: () {
-                setState(() {
-                  _showPassword = !_showPassword;
-                });
-              },
-            ),
             labelText: 'Password',
             errorText:
                 (snapshot.data?.visited ?? false) ? snapshot.data.error : null,

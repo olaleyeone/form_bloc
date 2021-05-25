@@ -1,6 +1,6 @@
 name: form_state
-description: Lightweight reactive form framework.
-version: 0.0.1
+description: Lightweight reactive form framework. Cleanly separate form logic from the UI.
+version: 0.0.2
 repository: https://github.com/olaleyeone/form_state
 
 environment:

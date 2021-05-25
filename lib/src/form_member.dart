@@ -6,4 +6,6 @@ abstract class FormMember<T> {
   Stream<FormMemberState<T>> get stateStream;
 
   Future<FormMemberState<T>> refreshState();
+
+  close();
 }
